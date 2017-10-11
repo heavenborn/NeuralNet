@@ -1,27 +1,32 @@
 import tensorflow as tf
 
-
+# using Tensorflow practice data
+# It uses handwritten images of 0 - 9, then learns to read them based on the data set 
 from tensorflow.examples.tutorials.mnist import input_data
 
-mnist = input_data.read_data_sets("data", one_hot=True)
+mnist = input_data.read_data_sets("data", one_hot=True) # 'one_hot' refers to whether the data is 'on' or 'off' 
 
 
 n_nodes_hl1 = 500  # Hidden Layers, these can be different values
 n_nodes_hl2 = 500
 n_nodes_hl3 = 500
 
-
+# 10 classes, 0-9
 n_classes = 10
-batch_size = 100
+batch_size = 100 # Pushing data through the network in batches of 100
 
 
 # height x width
-x = tf.placeholder('float', [None, 784])  # Input data is changed to have height of 0
+# the images are 28x28 pixels, 
+x = tf.placeholder('float', [None, 784])  # Input data is changed to have height of 0 and length of 784
+# 784 because 28 * 28 = 784
+
 y = tf.placeholder('float')  # Output data
 
 
 def neural_network_model(data):
 
+    # Defining weights & biases as Tensors, with random values
     hidden_1_layer = {'weights': tf.Variable(tf.random_normal([784, n_nodes_hl1])),
                       'biases': tf.Variable(tf.random_normal([n_nodes_hl1]))}
 
@@ -51,17 +56,18 @@ def neural_network_model(data):
 
 
 def train_neural_network(x):
-
+    # this is the 'trainer' 
+    # Calculates the cost, then optimizes it
     prediction = neural_network_model(x)
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
     optimizer = tf.train.AdamOptimizer().minimize(cost)
 
 
-    # Cycles of feed foward + back propigation
+    # Epochs are cycles of feed foward + back propigation
     hm_epochs = 10  # How many epochs do we want?
 
     with tf.Session() as sess:
-        sess.run(tf.initialize_all_variables())
+        sess.run(tf.initialize_all_variables()) # could be changed to tf.global_variables_initializer?
 
         for epoch in range(hm_epochs):
             epoch_loss = 0
